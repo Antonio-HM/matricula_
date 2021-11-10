@@ -1,0 +1,42 @@
+create database if not exists  matriculajava19;
+use matriculajava19;
+create table if not exists dboalumno(
+id_alumno int not null primary key auto_increment,
+nombre varchar(45) not null,
+apellido varchar(45) not null,
+edad int not null
+)engine InnoDB;
+insert into dboalumno (nombre,apellido,edad) values ('Jose','Mena',15),('Maria','Rosa',45);
+create table if not exists dboencargado(
+id_encargado int not null primary key auto_increment,
+nombre_encargado varchar(45) not null
+)engine InnoDB;
+insert into dboencargado (nombre_encargado) values ('Rosa Olivares'), ('Carlos Herrera');
+create  table if not exists dbogrupo(
+id_grupo int not null primary key auto_increment,
+nombre_grupo varchar(45) not null,
+id_encargado int not null,
+constraint fk_encargado foreign key (id_encargado) references dboencargado(id_encargado) on delete cascade on update cascade
+)engine InnoDB;
+insert into dbogrupo (nombre_grupo,id_encargado) values ('Java 19',1), ('Java 20',2);
+create table if not exists dbomatricula(
+id_matricula int not null primary key auto_increment,
+anio_matricula date not null,
+fecha_matricula date not null,
+id_alumno int not null,
+id_grupo int not null,
+constraint fk_alumno foreign key (id_alumno) references dboalumno(id_alumno) on update cascade on delete cascade,
+constraint fk_grupo foreign key (id_grupo) references dbogrupo(id_grupo) on update cascade on delete cascade
+)engine InnoDB;
+insert into dbomatricula (anio_matricula,fecha_matricula,id_alumno,id_grupo) 
+values ('2019-12-12','2020-01-01',1,1),('2019-12-13','2020-01-02',2,2);
+
+
+select m.id_matricula,a.nombre,a.apellido,g.nombre_grupo,e.nombre_encargado,m.anio_matricula,m.fecha_matricula
+from dbomatricula m 
+inner join dboalumno a on m.id_alumno = a.id_alumno
+inner join dbogrupo g on m.id_grupo = g.id_grupo
+inner join dboencargado e on g.id_encargado = e.id_encargado;
+
+select g.id_grupo,g.nombre_grupo,e.nombre_encargado 
+from dbogrupo g inner join dboencargado e on g.id_encargado = e.id_encargado
